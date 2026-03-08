@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMIÈRE — Salão de Beleza</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --creme: #F9F4EE;
+    --creme-escuro: #EEE5D8;
+    --dourado: #C9A96E;
+    --dourado-claro: #E8CFA0;
+    --marrom: #4A3728;
+    --marrom-escuro: #2C1F16;
+    --rose: #D4A5A5;
+    --texto: #3A2E28;
+    --cinza: #8C7B72;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--creme);
+    color: var(--texto);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR PERSONALIZADO */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--dourado);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--dourado);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    background: transparent;
+    transition: all 0.5s ease;
+  }
+  nav.scrolled {
+    background: rgba(249,244,238,0.92);
+    backdrop-filter: blur(12px);
+    padding: 18px 60px;
+    box-shadow: 0 1px 0 rgba(74,55,40,0.08);
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    color: var(--marrom);
+  }
+  .logo span { color: var(--dourado); }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--marrom);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--dourado);
+    transition: width 0.4s ease;
+  }
+  .nav-links a:hover { color: var(--dourado); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--creme);
+    background: var(--marrom);
+    border: none;
+    padding: 12px 28px;
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .nav-btn:hover { background: var(--dourado); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 80px 80px 100px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(64px, 7vw, 96px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--marrom-escuro);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--dourado);
+    font-weight: 300;
+  }
+  .hero-desc {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--cinza);
+    max-width: 380px;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.7s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 20px; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.9s forwards;
+  }
+  .btn-primary {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--creme);
+    background: var(--marrom-escuro);
+    border: none;
+    padding: 18px 44px;
+    cursor: none;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--dourado);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-secondary {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--marrom);
+    text-decoration: none;
+    border-bottom: 1px solid var(--dourado);
+    padding-bottom: 2px;
+    transition: color 0.3s;
+  }
+  .btn-secondary:hover { color: var(--dourado); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-img-wrap {
+    position: absolute; inset: 0;
+    clip-path: polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  .hero-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 0.4s forwards;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(74,55,40,0.15) 0%, transparent 60%);
+  }
+  .hero-badge {
+    position: absolute;
+    bottom: 80px; left: -30px;
+    background: var(--creme);
+    padding: 28px 32px;
+    box-shadow: 0 20px 60px rgba(74,55,40,0.15);
+    opacity: 0;
+    animation: fadeUp 0.9s ease 1.1s forwards;
+  }
+  .hero-badge-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--dourado);
+    line-height: 1;
+  }
+  .hero-badge-text {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-top: 4px;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 50px; left: 100px;
+    display: flex; align-items: center; gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 1.3s forwards;
+  }
+  .scroll-line {
+    width: 60px; height: 1px;
+    background: var(--dourado);
+    animation: expand 2s ease-in-out infinite;
+  }
+  .scroll-text {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--cinza);
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    background: var(--marrom-escuro);
+    padding: 18px 0;
+    overflow: hidden;
+  }
+  .marquee-track {
+    display: flex;
+    animation: marquee 25s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--dourado-claro);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 48px;
+  }
+  .marquee-item::after {
+    content: '✦';
+    color: var(--dourado);
+    font-style: normal;
+    font-size: 14px;
+  }
+
+  /* SOBRE */
+  .sobre {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 120px 0;
+  }
+  .sobre-img-wrap {
+    position: relative;
+    padding: 0 0 0 100px;
+  }
+  .sobre-img-main {
+    width: 85%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    display: block;
+  }
+  .sobre-img-accent {
+    position: absolute;
+    width: 55%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    bottom: -60px; right: 40px;
+    border: 8px solid var(--creme);
+    box-shadow: 0 30px 80px rgba(74,55,40,0.2);
+  }
+  .sobre-content {
+    padding: 60px 100px 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .section-eyebrow {
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-eyebrow::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--dourado);
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 4vw, 58px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--marrom-escuro);
+    margin-bottom: 28px;
+  }
+  .section-title em { font-style: italic; color: var(--dourado); }
+  .section-text {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--cinza);
+    margin-bottom: 16px;
+  }
+  .sobre-stats {
+    display: flex; gap: 48px;
+    margin-top: 48px;
+    padding-top: 48px;
+    border-top: 1px solid var(--creme-escuro);
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    color: var(--dourado);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-top: 6px;
+  }
+
+  /* SERVIÇOS */
+  .servicos { padding: 120px 100px; background: var(--marrom-escuro); }
+  .servicos-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 80px;
+  }
+  .servicos-header .section-eyebrow { color: var(--dourado-claro); }
+  .servicos-header .section-title { color: var(--creme); margin: 0; }
+  .servicos-header .section-title em { color: var(--dourado); }
+  .servicos-header-right { max-width: 320px; }
+  .servicos-desc { font-size: 13px; font-weight: 300; color: rgba(249,244,238,0.55); line-height: 1.8; }
+
+  .servicos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .servico-card {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    cursor: none;
+  }
+  .servico-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+    filter: brightness(0.65);
+  }
+  .servico-card:hover img { transform: scale(1.07); filter: brightness(0.5); }
+  .servico-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 48px 36px 36px;
+    background: linear-gradient(to top, rgba(44,31,22,0.95) 0%, transparent 100%);
+    transition: all 0.4s ease;
+  }
+  .servico-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.7;
+  }
+  .servico-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--creme);
+    margin-bottom: 8px;
+  }
+  .servico-preco {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--dourado);
+  }
+  .servico-desc-card {
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(249,244,238,0.65);
+    line-height: 1.7;
+    margin-top: 12px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .servico-card:hover .servico-desc-card { max-height: 100px; }
+
+  /* PROCESSO */
+  .processo { padding: 120px 100px; background: var(--creme-escuro); }
+  .processo-header { text-align: center; margin-bottom: 80px; }
+  .processo-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .processo-steps::before {
+    content: '';
+    position: absolute;
+    top: 36px; left: 12.5%; right: 12.5%;
+    height: 1px;
+    background: var(--dourado);
+    opacity: 0.3;
+  }
+  .passo {
+    text-align: center;
+    padding: 0 32px;
+    position: relative;
+  }
+  .passo-num {
+    width: 72px; height: 72px;
+    border: 1px solid var(--dourado);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--dourado);
+    background: var(--creme-escuro);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+  .passo:hover .passo-num {
+    background: var(--dourado);
+    color: var(--creme);
+  }
+  .passo-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--marrom-escuro);
+    margin-bottom: 12px;
+  }
+  .passo-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--cinza);
+    line-height: 1.8;
+  }
+
+  /* DEPOIMENTOS */
+  .depoimentos { padding: 120px 100px; overflow: hidden; }
+  .depo-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 80px; }
+  .depo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .depo-card {
+    background: var(--creme-escuro);
+    padding: 48px 40px;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .depo-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 70px rgba(74,55,40,0.12);
+  }
+  .depo-card::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px;
+    color: var(--dourado);
+    opacity: 0.15;
+    position: absolute;
+    top: -20px; left: 30px;
+    line-height: 1;
+  }
+  .depo-stars { color: var(--dourado); font-size: 14px; letter-spacing: 3px; margin-bottom: 20px; }
+  .depo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--marrom);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .depo-author { display: flex; align-items: center; gap: 16px; }
+  .depo-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--dourado);
+  }
+  .depo-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--marrom-escuro);
+    letter-spacing: 1px;
+  }
+  .depo-role {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--cinza);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* EQUIPE */
+  .equipe { padding: 120px 100px; background: var(--marrom-escuro); }
+  .equipe-header { text-align: center; margin-bottom: 80px; }
+  .equipe-header .section-eyebrow { color: var(--dourado-claro); justify-content: center; }
+  .equipe-header .section-eyebrow::before { display: none; }
+  .equipe-header .section-title { color: var(--creme); }
+  .equipe-header .section-title em { color: var(--dourado); }
+
+  .equipe-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .prof-card { position: relative; cursor: none; }
+  .prof-img-wrap {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    margin-bottom: 24px;
+  }
+  .prof-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%);
+    transition: all 0.5s ease;
+  }
+  .prof-card:hover .prof-img-wrap img { filter: grayscale(0%) scale(1.04); }
+  .prof-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(44,31,22,0.8) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .prof-card:hover .prof-overlay { opacity: 1; }
+  .prof-social {
+    position: absolute;
+    bottom: 24px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 12px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.4s ease;
+  }
+  .prof-card:hover .prof-social { transform: translateY(0); opacity: 1; }
+  .prof-social-btn {
+    width: 36px; height: 36px;
+    background: rgba(249,244,238,0.15);
+    border: 1px solid rgba(249,244,238,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    cursor: none;
+    transition: background 0.3s;
+  }
+  .prof-social-btn:hover { background: var(--dourado); }
+  .prof-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--creme);
+    margin-bottom: 6px;
+  }
+  .prof-esp {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dourado);
+  }
+
+  /* AGENDA / CTA */
+  .agenda {
+    padding: 160px 100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .agenda::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 70%);
+    top: -100px; right: -100px;
+  }
+  .agenda-left .section-title { margin-bottom: 16px; }
+  .agenda-left p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--cinza);
+    margin-bottom: 48px;
+  }
+  .agenda-info { display: flex; flex-direction: column; gap: 24px; margin-bottom: 48px; }
+  .info-item { display: flex; align-items: flex-start; gap: 20px; }
+  .info-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--dourado);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .info-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 4px;
+  }
+  .info-value { font-size: 14px; font-weight: 300; color: var(--texto); line-height: 1.6; }
+
+  /* FORMULÁRIO */
+  .form-wrap {
+    background: var(--marrom-escuro);
+    padding: 56px 52px;
+    position: relative;
+  }
+  .form-wrap::before {
+    content: '';
+    position: absolute;
+    top: -8px; right: -8px;
+    width: 100%; height: 100%;
+    border: 1px solid var(--dourado);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  .form-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--creme);
+    margin-bottom: 8px;
+  }
+  .form-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(249,244,238,0.5);
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+  }
+  .form-group { margin-bottom: 24px; }
+  .form-group label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 10px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,169,110,0.2);
+    padding: 14px 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--creme);
+    outline: none;
+    transition: border-color 0.3s;
+    cursor: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--dourado); }
+  .form-group select option { background: var(--marrom-escuro); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .btn-form {
+    width: 100%;
+    background: var(--dourado);
+    border: none;
+    padding: 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--marrom-escuro);
+    cursor: none;
+    margin-top: 8px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-form:hover { background: var(--creme); }
+
+  /* INSTAGRAM / GALERIA */
+  .galeria { padding: 80px 0 0; }
+  .galeria-header { text-align: center; padding: 0 100px; margin-bottom: 60px; }
+  .galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+  }
+  .galeria-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+    position: relative;
+    cursor: none;
+  }
+  .galeria-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9);
+    transition: all 0.5s ease;
+  }
+  .galeria-item:hover img { filter: brightness(0.6) saturate(0.7); transform: scale(1.08); }
+  .galeria-item-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s;
+    font-size: 24px;
+    color: var(--creme);
+  }
+  .galeria-item:hover .galeria-item-overlay { opacity: 1; }
+
+  /* FOOTER */
+  footer {
+    background: var(--marrom-escuro);
+    padding: 80px 100px 40px;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(201,169,110,0.15);
+  }
+  .footer-brand .logo { display: block; margin-bottom: 20px; color: var(--creme); }
+  .footer-brand p {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(249,244,238,0.4);
+    line-height: 1.8;
+    max-width: 260px;
+    margin-bottom: 32px;
+  }
+  .footer-social { display: flex; gap: 12px; }
+  .social-btn {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(201,169,110,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    color: var(--dourado);
+    cursor: none;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  .social-btn:hover { background: var(--dourado); color: var(--marrom-escuro); border-color: var(--dourado); }
+  .footer-col h4 {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 28px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .footer-links a {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(249,244,238,0.5);
+    text-decoration: none;
+    transition: color 0.3s;
+    letter-spacing: 0.5px;
+  }
+  .footer-links a:hover { color: var(--dourado); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px;
+  }
+  .footer-copy { font-size: 11px; font-weight: 300; color: rgba(249,244,238,0.25); letter-spacing: 1px; }
+
+  /* ANIMAÇÕES */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes expand {
+    0%, 100% { width: 40px; }
+    50% { width: 70px; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVO */
+  @media (max-width: 900px) {
+    nav { padding: 24px 32px; }
+    nav.scrolled { padding: 16px 32px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 120px 32px 60px; }
+    .hero-right { display: none; }
+    .sobre { grid-template-columns: 1fr; }
+    .sobre-img-wrap { padding: 0 32px; }
+    .sobre-content { padding: 60px 32px; }
+    .servicos { padding: 80px 32px; }
+    .servicos-header { flex-direction: column; gap: 24px; }
+    .servicos-grid { grid-template-columns: 1fr; }
+    .processo { padding: 80px 32px; }
+    .processo-steps { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .processo-steps::before { display: none; }
+    .depoimentos { padding: 80px 32px; }
+    .depo-grid { grid-template-columns: 1fr; }
+    .equipe { padding: 80px 32px; }
+    .equipe-grid { grid-template-columns: 1fr 1fr; }
+    .agenda { padding: 80px 32px; grid-template-columns: 1fr; gap: 60px; }
+    .galeria-grid { grid-template-columns: repeat(3, 1fr); }
+    footer { padding: 60px 32px 32px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR PERSONALIZADO -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo">LUMI<span>È</span>RE</div>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#equipe">Equipe</a></li>
+    <li><a href="#depoimentos">Avaliações</a></li>
+    <li><a href="#agenda">Contato</a></li>
+  </ul>
+  <button class="nav-btn" onclick="document.getElementById('agenda').scrollIntoView({behavior:'smooth'})">Agendar</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Salão de Beleza Premium · Desde 2008</p>
+    <h1 class="hero-title">Arte & <em>Beleza</em><br>que Transforma</h1>
+    <p class="hero-desc">Experiencie o cuidado com excelência. No Lumière, cada detalhe é pensado para que você se sinta única, renovada e radiante.</p>
+    <div class="hero-actions">
+      <a href="#agenda" class="btn-primary"><span>Agendar Horário</span></a>
+      <a href="#servicos" class="btn-secondary">Ver Serviços</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span class="scroll-text">Rolar</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-wrap">
+      <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=900&q=85" alt="Salão Lumière">
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-num">4.9</div>
+      <div class="hero-badge-text">Avaliação Média · +500 clientes</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Corte & Estilo</span>
+    <span class="marquee-item">Coloração</span>
+    <span class="marquee-item">Tratamentos Capilares</span>
+    <span class="marquee-item">Manicure & Pedicure</span>
+    <span class="marquee-item">Sobrancelha & Depilação</span>
+    <span class="marquee-item">Maquiagem</span>
+    <span class="marquee-item">Massagem</span>
+    <span class="marquee-item">Corte & Estilo</span>
+    <span class="marquee-item">Coloração</span>
+    <span class="marquee-item">Tratamentos Capilares</span>
+    <span class="marquee-item">Manicure & Pedicure</span>
+    <span class="marquee-item">Sobrancelha & Depilação</span>
+    <span class="marquee-item">Maquiagem</span>
+    <span class="marquee-item">Massagem</span>
+  </div>
+</div>
+
+<!-- SOBRE -->
+<section class="sobre" id="sobre">
+  <div class="sobre-img-wrap reveal">
+    <img class="sobre-img-main" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=700&q=80" alt="Interior do Salão">
+    <img class="sobre-img-accent" src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=400&q=80" alt="Detalhe">
+  </div>
+  <div class="sobre-content reveal">
+    <div class="section-eyebrow">Nossa História</div>
+    <h2 class="section-title">Um lugar onde<br>a <em>elegância</em> encontra<br>o cuidado</h2>
+    <p class="section-text">O Lumière nasceu da paixão pela beleza autêntica. Há mais de 15 anos, criamos experiências que vão além do visual — cuidamos da autoestima e do bem-estar de cada cliente que cruza nossa porta.</p>
+    <p class="section-text">Nossa equipe de profissionais altamente qualificados usa técnicas contemporâneas e produtos premium para garantir resultados excepcionais, sempre respeitando a individualidade de cada pessoa.</p>
+    <div class="sobre-stats">
+      <div>
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Anos de experiência</div>
+      </div>
+      <div>
+        <div class="stat-num">2k+</div>
+        <div class="stat-label">Clientes satisfeitas</div>
+      </div>
+      <div>
+        <div class="stat-num">12</div>
+        <div class="stat-label">Especialistas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section class="servicos" id="servicos">
+  <div class="servicos-header reveal">
+    <div>
+      <div class="section-eyebrow">O Que Fazemos</div>
+      <h2 class="section-title">Nossos<br><em>Serviços</em></h2>
+    </div>
+    <div class="servicos-header-right">
+      <p class="servicos-desc">Cada serviço é realizado com atenção minuciosa aos detalhes, usando os melhores produtos do mercado.</p>
+    </div>
+  </div>
+  <div class="servicos-grid reveal">
+    <div class="servico-card">
+      <img src="https://images.unsplash.com/photo-1621786030484-4c855eed6974?w=600&q=80" alt="Corte">
+      <div class="servico-info">
+        <span class="servico-icon">✂️</span>
+        <div class="servico-name">Corte & Estilo</div>
+        <div class="servico-preco">A partir de R$ 80</div>
+        <div class="servico-desc-card">Cortes modernos e clássicos, adaptados ao seu rosto e estilo de vida.</div>
+      </div>
+    </div>
+    <div class="servico-card">
+      <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80" alt="Coloração">
+      <div class="servico-info">
+        <span class="servico-icon">🎨</span>
+        <div class="servico-name">Coloração</div>
+        <div class="servico-preco">A partir de R$ 150</div>
+        <div class="servico-desc-card">Colorações exclusivas, luzes, mechas e balayage com técnicas avançadas.</div>
+      </div>
+    </div>
+    <div class="servico-card">
+      <img src="https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=600&q=80" alt="Tratamento">
+      <div class="servico-info">
+        <span class="servico-icon">💆</span>
+        <div class="servico-name">Tratamentos</div>
+        <div class="servico-preco">A partir de R$ 120</div>
+        <div class="servico-desc-card">Hidratação, reconstrução e cronogramas capilares personalizados.</div>
+      </div>
+    </div>
+    <div class="servico-card">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80" alt="Manicure">
+      <div class="servico-info">
+        <span class="servico-icon">💅</span>
+        <div class="servico-name">Manicure & Pedicure</div>
+        <div class="servico-preco">A partir de R$ 50</div>
+        <div class="servico-desc-card">Unhas impecáveis com gel, acrílico ou esmaltação comum e em gel.</div>
+      </div>
+    </div>
+    <div class="servico-card">
+      <img src="https://images.unsplash.com/photo-1457972729786-0411a3b2b626?w=600&q=80" alt="Maquiagem">
+      <div class="servico-info">
+        <span class="servico-icon">💄</span>
+        <div class="servico-name">Maquiagem</div>
+        <div class="servico-preco">A partir de R$ 130</div>
+        <div class="servico-desc-card">Make para eventos, casamentos, formatura e ensaios fotográficos.</div>
+      </div>
+    </div>
+    <div class="servico-card">
+      <img src="https://images.unsplash.com/photo-1470259078422-826894b933aa?w=600&q=80" alt="Sobrancelha">
+      <div class="servico-info">
+        <span class="servico-icon">✨</span>
+        <div class="servico-name">Design de Sobrancelha</div>
+        <div class="servico-preco">A partir de R$ 45</div>
+        <div class="servico-desc-card">Micropigmentação, henna, designer e modelagem profissional.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="processo" id="processo">
+  <div class="processo-header reveal">
+    <div class="section-eyebrow" style="justify-content: center;">Como Funciona</div>
+    <h2 class="section-title">Sua jornada de <em>beleza</em><br>em 4 passos simples</h2>
+  </div>
+  <div class="processo-steps reveal">
+    <div class="passo">
+      <div class="passo-num">01</div>
+      <div class="passo-title">Agendamento</div>
+      <p class="passo-desc">Escolha seu serviço e horário preferido pelo formulário ou WhatsApp.</p>
+    </div>
+    <div class="passo">
+      <div class="passo-num">02</div>
+      <div class="passo-title">Consultoria</div>
+      <p class="passo-desc">Nossa especialista entende seus objetivos e personaliza o serviço para você.</p>
+    </div>
+    <div class="passo">
+      <div class="passo-num">03</div>
+      <div class="passo-title">Experiência</div>
+      <p class="passo-desc">Relaxe e aproveite um momento de cuidado exclusivo em nosso ambiente.</p>
+    </div>
+    <div class="passo">
+      <div class="passo-num">04</div>
+      <div class="passo-title">Transformação</div>
+      <p class="passo-desc">Saia renovada, confiante e radiante. Sua beleza, nossa missão.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="depoimentos" id="depoimentos">
+  <div class="depo-header reveal">
+    <div>
+      <div class="section-eyebrow">Clientes Felizes</div>
+      <h2 class="section-title">O que dizem<br>sobre nós</h2>
+    </div>
+  </div>
+  <div class="depo-grid reveal">
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-text">Simplesmente o melhor salão que já frequentei. O ambiente é incrível, as profissionais são atenciosas e o resultado superou todas as minhas expectativas.</p>
+      <div class="depo-author">
+        <img class="depo-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Ana">
+        <div>
+          <div class="depo-name">Ana Carolina S.</div>
+          <div class="depo-role">Cliente há 3 anos</div>
+        </div>
+      </div>
+    </div>
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-text">Fiz minha maquiagem de casamento aqui e ficou perfeita! A Júlia entendeu exatamente o que eu queria. Me senti a noiva mais linda do mundo.</p>
+      <div class="depo-author">
+        <img class="depo-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80" alt="Mariana">
+        <div>
+          <div class="depo-name">Mariana P.</div>
+          <div class="depo-role">Cliente VIP</div>
+        </div>
+      </div>
+    </div>
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-text">Meu cabelo nunca esteve tão saudável e bonito. O tratamento capilar foi transformador. Indico para todas as minhas amigas sem hesitar!</p>
+      <div class="depo-author">
+        <img class="depo-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80" alt="Beatriz">
+        <div>
+          <div class="depo-name">Beatriz R.</div>
+          <div class="depo-role">Cliente há 5 anos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPE -->
+<section class="equipe" id="equipe">
+  <div class="equipe-header reveal">
+    <div class="section-eyebrow">Profissionais</div>
+    <h2 class="section-title">Nossa <em>Equipe</em></h2>
+  </div>
+  <div class="equipe-grid reveal">
+    <div class="prof-card">
+      <div class="prof-img-wrap">
+        <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&q=80" alt="Júlia">
+        <div class="prof-overlay"></div>
+        <div class="prof-social">
+          <div class="prof-social-btn">📸</div>
+          <div class="prof-social-btn">💬</div>
+        </div>
+      </div>
+      <div class="prof-name">Júlia Mendes</div>
+      <div class="prof-esp">Diretora & Colorista</div>
+    </div>
+    <div class="prof-card">
+      <div class="prof-img-wrap">
+        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" alt="Camila">
+        <div class="prof-overlay"></div>
+        <div class="prof-social">
+          <div class="prof-social-btn">📸</div>
+          <div class="prof-social-btn">💬</div>
+        </div>
+      </div>
+      <div class="prof-name">Camila Ramos</div>
+      <div class="prof-esp">Cabeleireira Sênior</div>
+    </div>
+    <div class="prof-card">
+      <div class="prof-img-wrap">
+        <img src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&q=80" alt="Fernanda">
+        <div class="prof-overlay"></div>
+        <div class="prof-social">
+          <div class="prof-social-btn">📸</div>
+          <div class="prof-social-btn">💬</div>
+        </div>
+      </div>
+      <div class="prof-name">Fernanda Lima</div>
+      <div class="prof-esp">Maquiadora Artística</div>
+    </div>
+    <div class="prof-card">
+      <div class="prof-img-wrap">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=80" alt="Isabela">
+        <div class="prof-overlay"></div>
+        <div class="prof-social">
+          <div class="prof-social-btn">📸</div>
+          <div class="prof-social-btn">💬</div>
+        </div>
+      </div>
+      <div class="prof-name">Isabela Costa</div>
+      <div class="prof-esp">Especialista em Unhas</div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDA / CONTATO -->
+<section class="agenda" id="agenda">
+  <div class="agenda-left reveal">
+    <div class="section-eyebrow">Agendar</div>
+    <h2 class="section-title">Pronta para se<br><em>transformar?</em></h2>
+    <p>Agende seu horário e venha viver a experiência Lumière. Estamos prontas para cuidar de você com toda a atenção e carinho que você merece.</p>
+    <div class="agenda-info">
+      <div class="info-item">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-label">Endereço</div>
+          <div class="info-value">Rua das Flores, 742 — Centro<br>São Paulo, SP · CEP 01310-000</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🕐</div>
+        <div>
+          <div class="info-label">Horário de Funcionamento</div>
+          <div class="info-value">Seg – Sex: 9h às 20h<br>Sábados: 9h às 18h</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📱</div>
+        <div>
+          <div class="info-label">Contato</div>
+          <div class="info-value">(11) 99999-8888<br>contato@lumieresalao.com.br</div>
+        </div>
+      </div>
+    </div>
+    <a href="https://wa.me/5511999998888" class="btn-primary" target="_blank"><span>💬 Chamar no WhatsApp</span></a>
+  </div>
+  <div class="form-wrap reveal">
+    <div class="form-title">Agendar Horário</div>
+    <div class="form-sub">Preencha abaixo e entraremos em contato</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" placeholder="Seu nome completo">
+      </div>
+      <div class="form-group">
+        <label>Telefone</label>
+        <input type="tel" placeholder="(11) 99999-0000">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" placeholder="seuemail@email.com">
+    </div>
+    <div class="form-group">
+      <label>Serviço Desejado</label>
+      <select>
+        <option value="">Selecione um serviço</option>
+        <option>Corte & Estilo</option>
+        <option>Coloração</option>
+        <option>Tratamento Capilar</option>
+        <option>Manicure & Pedicure</option>
+        <option>Maquiagem</option>
+        <option>Design de Sobrancelha</option>
+        <option>Pacote Completo</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Data Preferida</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>Horário</label>
+        <select>
+          <option>09:00</option><option>10:00</option><option>11:00</option>
+          <option>13:00</option><option>14:00</option><option>15:00</option>
+          <option>16:00</option><option>17:00</option><option>18:00</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-form" onclick="alert('✨ Agendamento solicitado! Entraremos em contato em breve.')">Confirmar Agendamento</button>
+  </div>
+</section>
+
+<!-- GALERIA INSTAGRAM -->
+<section class="galeria">
+  <div class="galeria-header reveal">
+    <div class="section-eyebrow" style="justify-content:center;">Instagram</div>
+    <h2 class="section-title">@lumieresalao</h2>
+  </div>
+  <div class="galeria-grid">
+    <div class="galeria-item"><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=70" alt=""><div class="galeria-item-overlay">📸</div></div>
+    <div class="galeria-item"><img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=300&q=70" alt=""><div class="galeria-item-overlay">📸</div></div>
+    <div class="galeria-item"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300&q=70" alt=""><div class="galeria-item-overlay">📸</div></div>
+    <div class="galeria-item"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=300&q=70" alt=""><div class="galeria-item-overlay">📸</div></div>
+    <div class="galeria-item"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=300&q=70" alt=""><div class="galeria-item-overlay">📸</div></div>
+    <div class="galeria-item"><img src="https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=300&q=70" alt=""><div class="galeria-item-overlay">📸</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="logo" style="color:var(--creme)">LUMI<span>È</span>RE</span>
+      <p>Arte, beleza e cuidado. Há mais de 15 anos transformando vidas com elegância e dedicação.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn">📸</a>
+        <a href="#" class="social-btn">💬</a>
+        <a href="#" class="social-btn">🎵</a>
+        <a href="#" class="social-btn">📘</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Serviços</h4>
+      <ul class="footer-links">
+        <li><a href="#">Corte & Estilo</a></li>
+        <li><a href="#">Coloração</a></li>
+        <li><a href="#">Tratamentos</a></li>
+        <li><a href="#">Manicure</a></li>
+        <li><a href="#">Maquiagem</a></li>
+        <li><a href="#">Sobrancelha</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Salão</h4>
+      <ul class="footer-links">
+        <li><a href="#">Sobre Nós</a></li>
+        <li><a href="#">Nossa Equipe</a></li>
+        <li><a href="#">Galeria</a></li>
+        <li><a href="#">Blog de Beleza</a></li>
+        <li><a href="#">Programa VIP</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contato</h4>
+      <ul class="footer-links">
+        <li><a href="#">(11) 99999-8888</a></li>
+        <li><a href="#">contato@lumieresalao.com.br</a></li>
+        <li><a href="#">Rua das Flores, 742</a></li>
+        <li><a href="#">Centro — São Paulo, SP</a></li>
+        <li><a href="#">Agendar Online</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2024 Lumière Salão de Beleza · Todos os direitos reservados</div>
+    <div class="footer-copy">Política de Privacidade · Termos de Uso</div>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cursor.style.left = mx - 4 + 'px'; cursor.style.top = my - 4 + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a,button,.servico-card,.prof-card,.galeria-item,.depo-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.transform = 'scale(2)'; ring.style.opacity = '0.3'; cursor.style.transform = 'scale(0.5)'; });
+    el.addEventListener('mouseleave', () => { ring.style.transform = 'scale(1)'; ring.style.opacity = '0.6'; cursor.style.transform = 'scale(1)'; });
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), 100);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
